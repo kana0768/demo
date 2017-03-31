@@ -1,6 +1,6 @@
 var http=require('http');
 var cheerio=require('cheerio');
-var url ='http://www.imooc.com/learn/694';
+var url ='http://www.imooc.com/learn/348';
 
 function filterChapters(html){
 	var $ =cheerio.load(html);
@@ -44,16 +44,23 @@ function filterChapters(html){
 	
 }
 
+function getPageAsync(url) {
+	return new Promise(function(resolve, reject) {
+		console.log('正在爬取 ' + url);
+		http.get(url,function(res){
+			var html='';
 
-http.get(url,function(res){
-	var html='';
-
-	res.on('data',function(data){
-		html+=data;
+			res.on('data',function(data){
+				html+=data;
+			});
+			res.on('end',function(){
+				resolve(html);
+				// filterChapters(html);
+			});
+		}).on('error',function(){
+			reject(e);
+			console.log('错误');
+		});
 	});
-	res.on('end',function(){
-		filterChapters(html);
-	})	
-}).on('error',function(){
-	console.log('错误');
-})
+}
+
